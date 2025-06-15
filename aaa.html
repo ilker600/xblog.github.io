@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Profesyonel Blog & Haber Platformu</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Material+Icons" rel="stylesheet" />
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  :root {
+    --color-primary: #0891b2;
+    --color-secondary: #06b6d4;
+    --color-accent: #059669;
+    --color-bg-light: #f9fafb;
+    --color-text-light: #1f2937;
+    --color-bg-dark: #121212;
+    --color-text-dark: #e5e7eb;
+    --border-radius: 12px;
+    --shadow-soft: 0 4px 10px rgba(0,0,0,0.1);
+    --font-size-base: 1rem;
+    --line-height-base: 1.55;
+  }
+  body.light {
+    --bg: var(--color-bg-light);
+    --text: var(--color-text-light);
+    --card-bg: #fff;
+    --card-shadow: var(--shadow-soft);
+    --header-bg: rgba(255 255 255 / 0.85);
+    --sidebar-bg: #f1f5f9;
+    --footer-bg: #e2e8f0;
+    --link-color: var(--color-primary);
+    --button-bg: var(--color-primary);
+    --button-hover-bg: var(--color-secondary);
+  }
+  body.dark {
+    --bg: var(--color-bg-dark);
+    --text: var(--color-text-dark);
+    --card-bg: #1e293b;
+    --card-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    --header-bg: rgba(18 18 18 / 0.95);
+    --sidebar-bg: #172031;
+    --footer-bg: #111827;
+    --link-color: var(--color-accent);
+    --button-bg: var(--color-accent);
+    --button-hover-bg: #065f46;
+  }
+
+  a {
+    color: var(--link-color);
+    text-decoration: none;
+  }
+  a:hover,
+  a:focus {
+    text-decoration: underline;
+  }
+  button {
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    background: var(--button-bg);
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+  button:hover,
+  button:focus {
+    background: var(--button-hover-bg);
+  }
+  input, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #ccc;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.3s;
+    background: var(--card-bg);
+    color: var(--text);
+    width: 100%;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--link-color);
+    outline: none;
+  }
+
+  .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    user-select: none;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+  }
+
+  /* Layout */
+  .app-container {
+    display: grid;
+    grid-template-columns: 300px 1fr 280px;
+    grid-template-rows: 1fr;
+    min-height: calc(100vh - 120px);
+    gap: 24px;
+    padding: 24px 32px;
+    overflow: hidden;
+  }
+
+  /* Header */
+  header.main-header {
+    position: sticky;
+    top: 0;
+    background: var(--header-bg);
+    box-shadow: var(--card-shadow);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    backdrop-filter: saturate(180%) blur(12px);
+    min-height: 60px;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    user-select: none;
+  }
+  .search-bar {
+    flex: 1;
+    max-width: 480px;
+    margin: 0 16px;
+    position: relative;
+  }
+  .search-bar input[type="search"] {
+    width: 100%;
+    padding: 10px 44px 10px 14px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+  }
+  .search-bar .material-icons {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--link-color);
+  }
+  nav.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  nav.user-menu button,
+  nav.user-menu .avatar-btn {
+    all: unset;
+    cursor: pointer;
+  }
+  .avatar-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--link-color);
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+  nav.user-menu .material-icons {
+    font-size: 28px;
+    color: var(--link-color);
+  }
+
+  /* Sidebar Left (Categories) */
+  aside.sidebar-left {
+    background: var(--sidebar-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+  }
+  aside.sidebar-left h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--link-color);
+    user-select: none;
+  }
+  ul.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  ul.category-list li {
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text);
+    user-select: none;
+    transition: background-color 0.25s ease;
+  }
+  ul.category-list li:hover,
+  ul.category-list li.selected {
+    background: var(--link-color);
+    color: var(--bg);
+  }
+  ul.category-list li .category-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
+  /* Main Content Area (Articles Feed) */
+  main.article-feed {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    overflow-y: auto;
+  }
+  .article-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  article.article-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  article.article-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  }
+  .article-card img {
+    display:none; /* No photo as requested */
+  }
+  .article-card .card-body {
+    padding: 18px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .article-card h3 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--link-color);
+    margin-bottom: 8px;
+    user-select: text;
+  }
+  .article-card p.summary {
+    flex-grow: 1;
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    user-select: text;
+  }
+  .article-meta {
+    font-size: 0.8rem;
+    color: #777;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .article-meta span {
+    user-select: none;
+  }
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .tag {
+    background: var(--link-color);
+    color: var(--bg);
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 8px;
+    user-select: none;
+  }
+  /* Infinite loading spinner */
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+  }
+  .spinner {
+    border: 4px solid rgba(0,0,0,0.1);
+    border-left-color: var(--link-color);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  /* Sidebar Right: Bookmarks and Reading List */
+  aside.sidebar-right {
+    background: var(--sidebar-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    overflow-y: auto;
+  }
+  aside.sidebar-right h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--link-color);
+    user-select: none;
+  }
+  .bookmark-list, .reading-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    user-select: none;
+  }
+  .bookmark-list .bookmark-item,
+  .reading-list .reading-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 10px 12px;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .bookmark-list .bookmark-item:hover,
+  .reading-list .reading-item:hover {
+    background-color: var(--link-color);
+    color: var(--bg);
+  }
+  .bookmark-list img,
+  .reading-list img {
+    display:none; /* No photo as requested */
+  }
+  .bookmark-item .title,
+  .reading-item .title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+  }
+  .reading-progress {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #999;
+    user-select: none;
+  }
+
+  /* Footer */
+  footer.main-footer {
+    background: var(--footer-bg);
+    padding: 24px 32px;
+    text-align: center;
+    color: var(--text);
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+  /* Modal (Article Preview & User Auth) */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.6);
+    display: none;
+    z-index: 120;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-backdrop.show {
+    display: flex;
+  }
+  .modal-content {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--card-shadow);
+    padding: 24px 32px;
+    position: relative;
+  }
+  .modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    color: var(--link-color);
+    cursor: pointer;
+    user-select: none;
+  }
+  .modal-article-content img {
+    display:none; /* No photo as requested */
+  }
+  .modal-article-content h2 {
+    margin-top: 0;
+  }
+  .modal-article-content p {
+    white-space: pre-wrap;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+  .modal-section {
+    margin-top: 28px;
+  }
+  .modal-comments {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding-right: 10px;
+  }
+  .modal-comments .comment {
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+  }
+  .modal-comments .comment .author {
+    font-weight: 700;
+  }
+  .modal-comments .comment .time {
+    color: #999;
+    font-size: 0.75rem;
+  }
+  .modal-comments .comment .text {
+    margin-top: 4px;
+  }
+  .comment-form textarea {
+    min-height: 70px;
+    resize: vertical;
+  }
+  .comment-form button {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  /* Form for login & register */
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .auth-form label {
+    font-weight: 600;
+  }
+  .auth-form input {
+    font-size: 1rem;
+  }
+  .auth-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 16px;
+    user-select: none;
+  }
+  .auth-tab {
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+  }
+  .auth-tab.active {
+    border-color: var(--link-color);
+    color: var(--link-color);
+  }
+
+  /* Controls for font size, theme */
+  .settings-bar {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    padding: 12px 0;
+    user-select: none;
+  }
+  .settings-bar label {
+    font-size: 0.9rem;
+  }
+  select, input[type="range"] {
+    max-width: 100px;
+  }
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .theme-toggle input {
+    cursor: pointer;
+  }
+
+  /* Responsive and mobile */
+  @media (max-width: 1024px) {
+    .app-container {
+      grid-template-columns: 1fr 280px;
+      padding: 24px 24px;
+    }
+    aside.sidebar-left {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .app-container {
+      grid-template-columns: 1fr;
+      padding: 16px 16px;
+      min-height: auto;
+    }
+    aside.sidebar-right {
+      display: none;
+    }
+    header.main-header {
+      flex-wrap: wrap;
+      padding: 12px 16px;
+    }
+    .search-bar {
+      max-width: 100%;
+      margin: 8px 0;
+      order: 3;
+      width: 100%;
+    }
+    nav.user-menu {
+      order: 2;
+      gap: 12px;
+    }
+    .logo {
+      font-size: 1.3rem;
+      order: 1;
+      width: 100%;
+      text-align: center;
+    }
+    .article-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body class="light" aria-label="Profesyonel blog ve haber platformu">
+
+<header class="main-header" role="banner">
+  <div class="logo" aria-label="Blog logosu">BlogMerkezi</div>
+  <div class="search-bar">
+    <input type="search" id="searchInput" aria-label="Makalelerde ve kategorilerde ara" placeholder="Makalelerde ara..." autocomplete="off" />
+    <span class="material-icons">search</span>
+  </div>
+  <nav class="user-menu" aria-label="Kullanıcı menüsü">
+    <button id="btnToggleDarkMode" aria-pressed="false" aria-label="Karanlık modu değiştir" title="Karanlık modu değiştir">
+      <span class="material-icons">dark_mode</span>
+    </button>
+    <button id="btnLogin" aria-haspopup="dialog" aria-controls="authModal" aria-label="Giriş yap veya kayıt ol">
+      <span class="material-icons">account_circle</span>
+    </button>
+  </nav>
+</header>
+
+<div class="app-container">
+  <aside class="sidebar-left" aria-label="Kategoriler" role="navigation">
+    <h2 id="categoriesHeading">Kategoriler</h2>
+    <ul class="category-list" aria-labelledby="categoriesHeading" role="list">
+      <!-- kategoriler dinamik gelecek -->
+    </ul>
+    <h2 id="trendingHeading">Popüler Konular</h2>
+    <ul class="category-list trending-list" aria-labelledby="trendingHeading" role="list">
+      <!-- popüler konular dinamik -->
+    </ul>
+  </aside>
+
+  <main class="article-feed" role="main" aria-live="polite" aria-relevant="additions">
+    <div class="settings-bar" aria-label="Okuma tercihleri ve ayarlar">
+      <label for="fontSizeSelector">Yazı Boyutu:</label>
+      <select id="fontSizeSelector" aria-controls="articleFeed" aria-label="Yazı boyutu seç">
+        <option value="small">Küçük</option>
+        <option value="medium" selected>Orta</option>
+        <option value="large">Büyük</option>
+      </select>
+
+      <label for="lineHeightSelector">Satır Aralığı:</label>
+      <select id="lineHeightSelector" aria-controls="articleFeed" aria-label="Satır aralığı seç">
+        <option value="1.4">Normal</option>
+        <option value="1.6" selected>Konforlu</option>
+        <option value="1.8">Geniş</option>
+      </select>
+    </div>
+    <section class="article-list" id="articleFeed" tabindex="0" aria-live="polite" aria-label="Makale listesi">
+      <!-- Makaleler dinamik -->
+    </section>
+    <div class="loading-spinner" id="loadingSpinner" aria-hidden="true">
+      <div class="spinner" role="status" aria-label="Makaleler yükleniyor"></div>
+    </div>
+  </main>
+
+  <aside class="sidebar-right" aria-label="Yer İmleri ve Okuma Listesi">
+    <section aria-labelledby="bookmarkHeading">
+      <h2 id="bookmarkHeading">Yer İmleri</h2>
+      <div class="bookmark-list" id="bookmarkList" role="list">
+        <!-- Yer imleri dinamik -->
+      </div>
+    </section>
+    <section aria-labelledby="readingListHeading">
+      <h2 id="readingListHeading">Okuma Listesi</h2>
+      <div class="reading-list" id="readingList" role="list">
+        <!-- Okuma listesi dinamik -->
+      </div>
+    </section>
+  </aside>
+</div>
+
+<footer class="main-footer" role="contentinfo">
+  © 2024 BlogMerkezi. Tüm hakları saklıdır.
+</footer>
+
+<!-- Makale Önizleme Modal -->
+<div class="modal-backdrop" id="articleModal" role="dialog" aria-modal="true" aria-labelledby="articleModalTitle" tabindex="-1">
+  <div class="modal-content">
+    <button class="modal-close-btn" id="modalCloseBtn" aria-label="Makale önizlemesini kapat">&times;</button>
+    <article class="modal-article-content" tabindex="0">
+      <!-- Makale içeriği -->
+    </article>
+  </div>
+</div>
+
+<!-- Kullanıcı Giriş/Kayıt Modal -->
+<div class="modal-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" tabindex="-1">
+  <div class="modal-content" role="document">
+    <button class="modal-close-btn" id="authModalCloseBtn" aria-label="Giriş/kayıt penceresini kapat">&times;</button>
+    <div id="authContainer">
+      <div class="auth-tabs" role="tablist" aria-label="Kimlik doğrulama sekmeleri">
+        <button class="auth-tab active" role="tab" aria-selected="true" aria-controls="loginPanel" id="loginTab">Giriş Yap</button>
+        <button class="auth-tab" role="tab" aria-selected="false" aria-controls="registerPanel" id="registerTab">Kayıt Ol</button>
+      </div>
+      <form id="loginPanel" class="auth-form" role="tabpanel" aria-labelledby="loginTab">
+        <label for="loginEmail">E-posta</label>
+        <input type="email" id="loginEmail" name="email" required autocomplete="username" />
+        <label for="loginPassword">Şifre</label>
+        <input type="password" id="loginPassword" name="password" required autocomplete="current-password" />
+        <button type="submit">Giriş Yap</button>
+      </form>
+      <form id="registerPanel" class="auth-form" role="tabpanel" aria-labelledby="registerTab" hidden>
+        <label for="registerName">İsim</label>
+        <input type="text" id="registerName" name="name" required autocomplete="name" />
+        <label for="registerEmail">E-posta</label>
+        <input type="email" id="registerEmail" name="email" required autocomplete="email" />
+        <label for="registerPassword">Şifre</label>
+        <input type="password" id="registerPassword" name="password" required autocomplete="new-password" />
+        <button type="submit">Kayıt Ol</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // Sabitler ve durum
+  const articlesPerPage = 12;
+
+  // Örnek makaleler verisi (mock) Türkçe içerik ve isimlerle
+  const demoArticles = (() => {
+    const categories = [
+      {id:'teknoloji', name:'Teknoloji', color:'#0891b2'},
+      {id:'saglik', name:'Sağlık', color:'#16a34a'},
+      {id:'bilim', name:'Bilim', color:'#f59e0b'},
+      {id:'is', name:'İş Dünyası', color:'#d97706'},
+      {id:'kultur', name:'Kültür', color:'#8b5cf6'},
+      {id:'spor', name:'Spor', color:'#ef4444'}
+    ];
+    const tagsPool = ['Yapay Zeka','Fitness','Finans','İnovasyon','Araştırma','Futbol','Seyahat','Sanat','Startuplar','Sağlık'];
+    const sources = ['TeknoHaber', 'SağlıkRehberi', 'BilimDünyası', 'Forbes TR', 'Kültür Magazin', 'Spor Haber'];
+
+    const authors = ['Ahmet Yılmaz', 'Elif Demir', 'Mehmet Kaya', 'Ayşe Öz', 'Fatma Çelik', 'Can Yıldız', 'Deniz Taş', 'Murat Şahin', 'Zeynep Kılıç', 'Emre Güney'];
+
+    const titlesByCategory = {
+      teknoloji:[
+        'Yeni Nesil Akıllı Telefon İncelemesi',
+        'Yapay Zeka ve Geleceği',
+        '5G Teknolojisinin Yükselişi',
+        'Elektrikli Araçlarda Son Gelişmeler',
+        'Siber Güvenlikte En İyi Uygulamalar',
+        'Programlama Dilleri Karşılaştırması',
+        'Dijital Dönüşümün Önemi',
+        'Metaverse Dünyasına İlk Adımlar'
+      ],
+      saglik:[
+        'Sağlıklı Beslenmenin Püf Noktaları',
+        'Egzersizin Vücuda Faydaları',
+        'Mental Sağlık İçin Yapılabilecekler',
+        'Kış Hastalıklarına Karşı Korunma',
+        'Bağışıklık Sistemini Güçlendirme',
+        'Hamilelikte Dikkat Edilmesi Gerekenler',
+        'Uyku Düzeni ve Önemi',
+        'Doğal Tedavi Yöntemleri'
+      ],
+      bilim:[
+        'Uzay Araştırmalarında Yeni Dönem',
+        'İklim Değişikliği ve Etkileri',
+        'Biyoteknolojide Son Gelişmeler',
+        'Kozmolojiye Giriş',
+        'Genetik Mühendisliğinin Geleceği',
+        'Nörobilim ve İnsan Beyni',
+        'Fizikte Çığır Açan Keşifler',
+        'Robotik Teknolojilerinin Evrimi'
+      ],
+      is:[
+        'Başarılı Girişimcilik Rehberi',
+        'Dijital Pazarlama Stratejileri',
+        'E-Ticaretin Yükselişi',
+        'Liderlik ve Yönetim Teknikleri',
+        'Finansal Planlama İpuçları',
+        'Startuplar İçin Yatırımcı Bulma',
+        'Uzaktan Çalışma Kültürü',
+        'İş Dünyasında Kadın İstihdamı'
+      ],
+      kultur:[
+        'Türk Mutfağından Lezzetler',
+        'Sanat Tarihinde İz Bırakanlar',
+        'Dünyaca Ünlü Festivaller',
+        'Edebiyatta Yeni Akımlar',
+        'Tarihî Mekanlar ve Hikayeleri',
+        'Müzik Türlerinde Trendler',
+        'Sinema Dünyasından Haberler',
+        'Tiyatro ve Sahne Sanatları'
+      ],
+      spor:[
+        '2024 Olimpiyatlarına Hazırlık',
+        'Futbolda Son Transferler',
+        'Sağlıklı Yaşam İçin Spor Önerileri',
+        'Basketbolda Taktikler ve Stratejiler',
+        'Sporcu Beslenmesi Rehberi',
+        'Maraton Koşusunun Püf Noktaları',
+        'Genç Sporcular İçin Tavsiyeler',
+        'E-sporun Yükselişi'
+      ]
+    };
+
+    let articles = [];
+    let idCounter = 1;
+
+    categories.forEach(cat => {
+      const titles = titlesByCategory[cat.id] || [];
+      titles.forEach(title => {
+        const author = authors[Math.floor(Math.random()*authors.length)];
+        const summary = `${title} hakkında detaylı ve güncel bilgiler içeren kapsamlı bir makaledir.`;
+        const content =
+`${title}
+
+Yazan: ${author} | Kaynak: ${sources[Math.floor(Math.random()*sources.length)]} | Yayın Tarihi: ${new Date(Date.now() - idCounter * 86400000).toLocaleDateString('tr-TR')}
+
+Bu makalede, ${cat.name.toLowerCase()} alanında önemli gelişmeler, trendler ve analizler bulunmaktadır. Detaylı bilgilerle konuyu en doğru şekilde ele almaya çalıştık.
+
+Önemli Noktalar:
+- Anahtar bilgi 1.
+- Güncel gelişmeler.
+- Uzman görüşleri.
+
+Sonuç olarak, ${cat.name.toLowerCase()} alanında bilinmesi gereken temel bilgiler sunulmuştur.
+`;
+
+        articles.push({
+          id: idCounter.toString(),
+          title,
+          summary,
+          content,
+          author,
+          source: sources[Math.floor(Math.random()*sources.length)],
+          publishedAt: new Date(Date.now() - idCounter * 86400000).toISOString(),
+          category: cat.id,
+          categoryName: cat.name,
+          categoryColor: cat.color,
+          tags: [tagsPool[Math.floor(Math.random()*tagsPool.length)]],
+          imageUrl: '', // No images as requested
+          readTime: Math.floor(3 + Math.random() * 5),
+          views: Math.floor(100 + Math.random()*10000),
+        });
+        idCounter++;
+      });
+    });
+
+    // Fill up to ~60 articles by duplicating or cycling some entries for a sizable list
+    while(articles.length < 60) {
+      const duplicate = Object.assign({}, articles[articles.length % articles.length]);
+      duplicate.id = (idCounter++).toString();
+      articles.push(duplicate);
+    }
+    return articles;
+  })();
+
+  let state = {
+    articles: [],
+    currentPage: 1,
+    currentCategories: new Set(),
+    searchTerm: '',
+    fontSize: 'medium',
+    lineHeight: 1.6,
+    theme: 'light',
+    bookmarks: [],
+    readingList: [],
+    user: null,
+    comments: {}, // {articleId: [{author,text,date}]}
+  };
+
+  // DOM Elements
+  const categoryListEl = document.querySelector('ul.category-list');
+  const trendingListEl = document.querySelector('ul.trending-list');
+  const articleFeedEl = document.getElementById('articleFeed');
+  const loadingSpinnerEl = document.getElementById('loadingSpinner');
+  const bookmarkListEl = document.getElementById('bookmarkList');
+  const readingListEl = document.getElementById('readingList');
+  const btnToggleDarkMode = document.getElementById('btnToggleDarkMode');
+  const searchInput = document.getElementById('searchInput');
+  const fontSizeSelector = document.getElementById('fontSizeSelector');
+  const lineHeightSelector = document.getElementById('lineHeightSelector');
+  const articleModal = document.getElementById('articleModal');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const authModal = document.getElementById('authModal');
+  const authModalCloseBtn = document.getElementById('authModalCloseBtn');
+  const btnLogin = document.getElementById('btnLogin');
+  const authTabs = document.querySelectorAll('.auth-tab');
+  const loginPanel = document.getElementById('loginPanel');
+  const registerPanel = document.getElementById('registerPanel');
+
+  // Util Functions
+  const saveToStorage = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+  const loadFromStorage = key => JSON.parse(localStorage.getItem(key) || 'null');
+
+  // Initialize from storage
+  (() => {
+    const themeStored = loadFromStorage('theme');
+    if(themeStored) state.theme = themeStored;
+
+    const fontSizeStored = loadFromStorage('fontSize');
+    if(fontSizeStored) state.fontSize = fontSizeStored;
+
+    const lineHeightStored = loadFromStorage('lineHeight');
+    if(lineHeightStored) state.lineHeight = lineHeightStored;
+
+    const bookmarksStored = loadFromStorage('bookmarks');
+    if(Array.isArray(bookmarksStored)) state.bookmarks = bookmarksStored;
+
+    const readingListStored = loadFromStorage('readingList');
+    if(Array.isArray(readingListStored)) state.readingList = readingListStored;
+
+    const userStored = loadFromStorage('user');
+    if(userStored) state.user = userStored;
+
+    const commentsStored = loadFromStorage('comments');
+    if(commentsStored) state.comments = commentsStored;
+  })();
+
+  // Apply theme and preferences
+  const applyTheme = () => {
+    document.body.classList.remove('light','dark');
+    document.body.classList.add(state.theme);
+    btnToggleDarkMode.setAttribute('aria-pressed', state.theme === 'dark');
+    // Icon changes
+    btnToggleDarkMode.querySelector('.material-icons').textContent = state.theme === 'dark' ? 'light_mode' : 'dark_mode';
+  };
+  const applyFontSize = () => {
+    let sizeVal = '1rem';
+    if (state.fontSize === 'small') sizeVal = '0.875rem';
+    else if (state.fontSize === 'medium') sizeVal = '1rem';
+    else if (state.fontSize === 'large') sizeVal = '1.125rem';
+    document.documentElement.style.fontSize = sizeVal;
+  };
+  const applyLineHeight = () => {
+    document.body.style.lineHeight = state.lineHeight;
+  };
+
+  // Categories are already defined above.
+
+  // Trending Topics sample
+  const trendingTopics = ['Yapay Zeka', 'İnovasyon', 'Fitness', 'Startuplar', 'Seyahat','Sanat'];
+
+  // Render categories list (with counts & selection)
+  function renderCategories() {
+    categoryListEl.innerHTML = '';
+    categories.forEach(cat => {
+      const count = demoArticles.filter(a => a.category === cat.id).length;
+      const li = document.createElement('li');
+      li.dataset.cat = cat.id;
+      li.setAttribute('tabindex', '0');
+      if(state.currentCategories.has(cat.id)) li.classList.add('selected');
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', state.currentCategories.has(cat.id));
+      li.innerHTML = `<span class="category-color" style="background-color: ${cat.color};"></span>${cat.name} <span aria-label="Makale sayısı">${count}</span>`;
+      categoryListEl.appendChild(li);
+
+      li.onclick = () => {
+        if(state.currentCategories.has(cat.id)) state.currentCategories.delete(cat.id);
+        else state.currentCategories.add(cat.id);
+        renderCategories();
+        resetArticles();
+        fetchAndRenderArticles();
+      };
+      li.onkeydown = e => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          li.click();
+        }
+      };
+    });
+  }
+
+  function renderTrending() {
+    trendingListEl.innerHTML = '';
+    trendingTopics.forEach(topic => {
+      const li = document.createElement('li');
+      li.textContent = topic;
+      li.setAttribute('tabindex', '0');
+      li.style.cursor = 'pointer';
+      trendingListEl.appendChild(li);
+      li.onclick = () => {
+        searchInput.value = topic;
+        state.searchTerm = topic;
+        resetArticles();
+        fetchAndRenderArticles();
+      };
+      li.onkeydown = e => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          li.click();
+        }
+      };
+    });
+  }
+
+  // Reset and fetch articles same as before with Turkish content.
+
+  function resetArticles() {
+    state.currentPage = 1;
+    state.articles = [];
+    articleFeedEl.innerHTML = '';
+  }
+
+  // Fetch articles with filtering and pagination
+  function fetchArticles(page = 1) {
+    loadingSpinnerEl.setAttribute('aria-hidden', 'false');
+    loadingSpinnerEl.style.display = 'flex';
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Filter by categories
+        let filtered = demoArticles;
+        if(state.currentCategories.size > 0) {
+          filtered = filtered.filter(a => state.currentCategories.has(a.category));
+        }
+        // Filter by search
+        if(state.searchTerm.trim().length > 0) {
+          const term = state.searchTerm.trim().toLowerCase();
+          filtered = filtered.filter(a =>
+            a.title.toLowerCase().includes(term) ||
+            a.summary.toLowerCase().includes(term) ||
+            a.tags.some(t => t.toLowerCase().includes(term))
+          );
+        }
+        // Pagination
+        const startIdx = (page-1)*articlesPerPage;
+        const paged = filtered.slice(startIdx, startIdx + articlesPerPage);
+        resolve(paged);
+      }, 600);
+    });
+  }
+
+  // Render articles cards - removing image tag (hidden) since no photo
+
+  function renderArticles(articles) {
+    if(articles.length === 0 && state.currentPage === 1) {
+      articleFeedEl.innerHTML = `<p>Aramanıza uygun makale bulunamadı.</p>`;
+      loadingSpinnerEl.style.display = 'none';
+      loadingSpinnerEl.setAttribute('aria-hidden', 'true');
+      return;
+    }
+    articles.forEach(article => {
+      const existing = articleFeedEl.querySelector(`[data-id="${article.id}"]`);
+      if (existing) return; // Avoid duplicates
+      const articleCard = document.createElement('article');
+      articleCard.className = 'article-card';
+      articleCard.dataset.id = article.id;
+      articleCard.setAttribute('tabindex', '0');
+      articleCard.setAttribute('role', 'article');
+      articleCard.setAttribute('aria-label', article.title);
+
+      articleCard.innerHTML = `
+        <img src="" alt="" style="display:none;" />
+        <div class="card-body">
+          <h3>${article.title}</h3>
+          <p class="summary">${article.summary}</p>
+          <div class="article-meta">
+            <span>${new Date(article.publishedAt).toLocaleDateString('tr-TR')}</span>
+            <span>⏳ ${article.readTime} dk okuma</span>
+          </div>
+          <div class="article-tags" aria-label="Etiketler">${article.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+      `;
+
+      articleCard.onclick = () => openArticleModal(article.id);
+      articleCard.onkeydown = e => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          articleCard.click();
+        }
+      };
+
+      articleFeedEl.appendChild(articleCard);
+    });
+    loadingSpinnerEl.style.display = 'none';
+    loadingSpinnerEl.setAttribute('aria-hidden', 'true');
+  }
+
+  // Continue with rest of functions translated similarly...
+
+  async function fetchAndRenderArticles() {
+    loadingSpinnerEl.style.display = 'flex';
+    const newArticles = await fetchArticles(state.currentPage);
+    if(newArticles.length > 0) {
+      state.articles = [...state.articles, ...newArticles];
+      renderArticles(newArticles);
+    }
+    loadingSpinnerEl.style.display = 'none';
+  }
+
+  function onScroll() {
+    const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+    if(scrollTop + clientHeight > scrollHeight - 280) {
+      if(loadingSpinnerEl.style.display === 'flex') return;
+      state.currentPage++;
+      fetchAndRenderArticles();
+    }
+  }
+
+  function init() {
+    applyTheme();
+    applyFontSize();
+    applyLineHeight();
+
+    renderCategories();
+    renderTrending();
+
+    fetchAndRenderArticles();
+
+    window.addEventListener('scroll', onScroll);
+
+    let debounceTimeout;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(() => {
+        state.searchTerm = e.target.value;
+        resetArticles();
+        fetchAndRenderArticles();
+      }, 400);
+    });
+
+    btnToggleDarkMode.addEventListener('click', () => {
+      state.theme = state.theme === 'light' ? 'dark' : 'light';
+      applyTheme();
+      saveToStorage('theme', state.theme);
+    });
+
+    fontSizeSelector.value = state.fontSize;
+    fontSizeSelector.addEventListener('change', e => {
+      state.fontSize = e.target.value;
+      applyFontSize();
+      saveToStorage('fontSize', state.fontSize);
+    });
+
+    lineHeightSelector.value = state.lineHeight;
+    lineHeightSelector.addEventListener('change', e => {
+      state.lineHeight = e.target.value;
+      applyLineHeight();
+      saveToStorage('lineHeight', state.lineHeight);
+    });
+
+    btnLogin.addEventListener('click', () => {
+      openAuthModal();
+    });
+    authModalCloseBtn.addEventListener('click', closeAuthModal);
+    modalCloseBtn.addEventListener('click', closeArticleModal);
+
+    authModal.addEventListener('click', (e) => {
+      if(e.target === authModal) closeAuthModal();
+    });
+    articleModal.addEventListener('click', (e) => {
+      if(e.target === articleModal) closeArticleModal();
+    });
+
+    authTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        authTabs.forEach(t => {
+          t.classList.toggle('active', t === tab);
+          t.setAttribute('aria-selected', t === tab);
+        });
+        if(tab.id === 'loginTab') {
+          loginPanel.hidden = false;
+          registerPanel.hidden = true;
+        } else {
+          loginPanel.hidden = true;
+          registerPanel.hidden = false;
+        }
+      });
+    });
+
+    loginPanel.addEventListener('submit', e => {
+      e.preventDefault();
+      const email = loginPanel.email.value.trim().toLowerCase();
+      const password = loginPanel.password.value;
+      if(authenticateUser(email, password)) {
+        closeAuthModal();
+        alert("Başarıyla giriş yapıldı!");
+        updateUserUI();
+      } else {
+        alert("Geçersiz e-posta veya şifre.");
+      }
+    });
+
+    registerPanel.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = registerPanel.name.value.trim();
+      const email = registerPanel.email.value.trim().toLowerCase();
+      const password = registerPanel.password.value;
+      if(registerUser(name, email, password)) {
+        closeAuthModal();
+        alert("Başarıyla kayıt olundu!");
+        updateUserUI();
+      } else {
+        alert("Bu e-posta zaten kayıtlı.");
+      }
+    });
+
+    updateUserUI();
+    renderBookmarks();
+    renderReadingList();
+  }
+
+  const authenticateUser = (email, password) => {
+    const users = loadFromStorage('users') || [];
+    const userFound = users.find(u => u.email === email && u.password === password);
+    if(userFound) {
+      state.user = {...userFound};
+      saveToStorage('user', state.user);
+      return true;
+    }
+    return false;
+  };
+  const registerUser = (name, email, password) => {
+    const users = loadFromStorage('users') || [];
+    if(users.some(u => u.email === email)) return false;
+    const newUser = {name, email, password};
+    users.push(newUser);
+    saveToStorage('users', users);
+    state.user = newUser;
+    saveToStorage('user', state.user);
+    return true;
+  };
+  const logoutUser = () => {
+    state.user = null;
+    saveToStorage('user', null);
+    updateUserUI();
+  };
+
+  function updateUserUI() {
+    const navUserMenu = document.querySelector('nav.user-menu');
+    navUserMenu.innerHTML = '';
+    if(state.user) {
+      const avatarBtn = document.createElement('button');
+      avatarBtn.className = 'avatar-btn';
+      avatarBtn.textContent = state.user.name[0].toUpperCase();
+      avatarBtn.setAttribute('aria-label', `${state.user.name} kullanıcısı menüsü`);
+      navUserMenu.appendChild(avatarBtn);
+
+      const menu = document.createElement('div');
+      menu.style.position = 'absolute';
+      menu.style.top = '60px';
+      menu.style.right = '32px';
+      menu.style.background = 'var(--card-bg)';
+      menu.style.borderRadius = 'var(--border-radius)';
+      menu.style.boxShadow = 'var(--card-shadow)';
+      menu.style.padding = '8px';
+      menu.style.display = 'none';
+      menu.style.zIndex = '150';
+      menu.setAttribute('role', 'menu');
+
+      const logoutOption = document.createElement('button');
+      logoutOption.textContent = 'Çıkış Yap';
+      logoutOption.style.padding = '6px 12px';
+      logoutOption.style.background = 'transparent';
+      logoutOption.style.border = 'none';
+      logoutOption.style.color = 'var(--text)';
+      logoutOption.style.cursor = 'pointer';
+      logoutOption.addEventListener('click', () => {
+        logoutUser();
+        menu.style.display = 'none';
+      });
+      logoutOption.setAttribute('role', 'menuitem');
+
+      menu.appendChild(logoutOption);
+      document.body.appendChild(menu);
+
+      avatarBtn.addEventListener('click', () => {
+        if(menu.style.display === 'none') menu.style.display = 'block';
+        else menu.style.display = 'none';
+      });
+      document.addEventListener('click', (e) => {
+        if(!avatarBtn.contains(e.target) && !menu.contains(e.target)) {
+          menu.style.display = 'none';
+        }
+      });
+
+      const readingListBtn = document.createElement('button');
+      readingListBtn.title = 'Okuma Listeniz';
+      readingListBtn.setAttribute('aria-label', 'Okuma listeniz');
+      readingListBtn.innerHTML = `<span class="material-icons">bookmark</span>`;
+      readingListBtn.style.color = 'var(--link-color)';
+      readingListBtn.style.marginLeft = '16px';
+      readingListBtn.addEventListener('click', () => {
+        alert("Sağ taraftaki Okuma Listesini kullanın.");
+      });
+
+      navUserMenu.appendChild(readingListBtn);
+    } else {
+      navUserMenu.innerHTML = `
+        <button id="btnToggleDarkMode" aria-pressed="${state.theme === 'dark'}" aria-label="Karanlık modu değiştir" title="Karanlık modu değiştir">
+          <span class="material-icons">${state.theme === 'dark' ? 'light_mode' : 'dark_mode'}</span>
+        </button>
+        <button id="btnLogin" aria-haspopup="dialog" aria-controls="authModal" aria-label="Giriş yap veya kayıt ol">
+          <span class="material-icons">account_circle</span>
+        </button>
+      `;
+      document.getElementById('btnToggleDarkMode').addEventListener('click', () => {
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        applyTheme();
+        saveToStorage('theme', state.theme);
+      });
+      document.getElementById('btnLogin').addEventListener('click', () => {
+        openAuthModal();
+      });
+    }
+  }
+
+  function renderBookmarks() {
+    bookmarkListEl.innerHTML = '';
+    if(state.bookmarks.length === 0) {
+      bookmarkListEl.innerHTML = '<p>Henüz yer işaretiniz yok.</p>';
+      return;
+    }
+    for (const bm of state.bookmarks) {
+      const article = demoArticles.find(a => a.id === bm.articleId);
+      if (!article) continue;
+      const div = document.createElement('div');
+      div.className = 'bookmark-item';
+      div.tabIndex = 0;
+      div.setAttribute('role','listitem');
+      div.setAttribute('aria-label', `Yer imi: ${article.title}`);
+
+      div.innerHTML = `
+        <div class="title">${article.title}</div>
+        <button aria-label="Yer imini kaldır" title="Yer imini kaldır" class="material-icons remove-bookmark-btn" style="margin-left:auto;color:#f87171;">close</button>
+      `;
+      const removeBtn = div.querySelector('.remove-bookmark-btn');
+      removeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        removeBookmark(article.id);
+      });
+      div.addEventListener('click', () => openArticleModal(article.id));
+      bookmarkListEl.appendChild(div);
+    }
+  }
+
+  function renderReadingList() {
+    readingListEl.innerHTML = '';
+    if(state.readingList.length === 0) {
+      readingListEl.innerHTML = '<p>Okuma listenizde henüz makale yok.</p>';
+      return;
+    }
+    state.readingList.forEach(item => {
+      let article = demoArticles.find(a => a.id === item.articleId);
+      if(!article) return;
+      const div = document.createElement('div');
+      div.className = 'reading-item';
+      div.tabIndex = 0;
+      div.setAttribute('role','listitem');
+      div.setAttribute('aria-label', `Okuma listesi makalesi: ${article.title}`);
+      div.innerHTML = `
+        <div class="title">${article.title}</div>
+        <div class="reading-progress">${Math.floor(item.progress*100)}%</div>
+      `;
+      div.addEventListener('click', () => openArticleModal(article.id));
+      readingListEl.appendChild(div);
+    });
+  }
+
+  function addBookmark(articleId) {
+    if(!state.bookmarks.find(b => b.articleId === articleId)) {
+      state.bookmarks.push({articleId, bookmarkedAt: new Date().toISOString(), notes: ''});
+      saveToStorage('bookmarks', state.bookmarks);
+      renderBookmarks();
+    }
+  }
+  function removeBookmark(articleId) {
+    state.bookmarks = state.bookmarks.filter(b => b.articleId !== articleId);
+    saveToStorage('bookmarks', state.bookmarks);
+    renderBookmarks();
+  }
+
+  function addToReadingList(articleId) {
+    if(!state.readingList.find(r => r.articleId === articleId)) {
+      state.readingList.push({articleId, addedAt: new Date().toISOString(), progress: 0, completedAt: null});
+      saveToStorage('readingList', state.readingList);
+      renderReadingList();
+    }
+  }
+  function removeFromReadingList(articleId) {
+    state.readingList = state.readingList.filter(r => r.articleId !== articleId);
+    saveToStorage('readingList', state.readingList);
+    renderReadingList();
+  }
+  function updateReadingProgress(articleId, progressPercent) {
+    const item = state.readingList.find(r => r.articleId === articleId);
+    if(!item) return;
+    item.progress = Math.min(Math.max(progressPercent, 0), 1);
+    if(item.progress >= 1) item.completedAt = new Date().toISOString();
+    saveToStorage('readingList', state.readingList);
+    renderReadingList();
+  }
+
+  function openArticleModal(articleId) {
+    const article = demoArticles.find(a => a.id === articleId);
+    if (!article) return;
+    const articleContentEl = articleModal.querySelector('.modal-article-content');
+    articleContentEl.innerHTML = `
+      <h2 id="articleModalTitle">${article.title}</h2>
+      <p><em>Yazan: ${article.author} | Kaynak: ${article.source} | Yayın Tarihi: ${new Date(article.publishedAt).toLocaleDateString('tr-TR')}</em></p>
+      <pre style="white-space: pre-wrap; font-family: 'Inter', sans-serif; font-size: 1rem;">${article.content}</pre>
+      <div class="modal-section">
+        <button id="btnBookmarkArticle" aria-pressed="${state.bookmarks.some(b => b.articleId === articleId)}" aria-label="Makale için yer imi ekle/kaldır">${state.bookmarks.some(b => b.articleId === articleId) ? 'Yer İmini Kaldır' : 'Yer İmi Ekle'}</button>
+        <button id="btnAddReadingList" aria-pressed="${state.readingList.some(r => r.articleId === articleId)}" aria-label="Okuma listesine ekle/kaldır">${state.readingList.some(r => r.articleId === articleId) ? 'Okuma Listesinden Kaldır' : 'Okuma Listesine Ekle'}</button>
+        <button id="btnTextToSpeech" aria-label="Metni sesli oku">▶️ Sesli Oku</button>
+      </div>
+      <div class="modal-section" aria-label="Yorumlar bölümü">
+        <h3 id="commentsTitle">Yorumlar</h3>
+        <div class="modal-comments" aria-labelledby="commentsTitle" tabindex="0"></div>
+        <form class="comment-form" aria-label="Yeni yorum ekle" id="commentForm">
+          <label for="commentText">Yorum yazın:</label>
+          <textarea id="commentText" name="commentText" required placeholder="Yorumunuzu yazın..." aria-required="true"></textarea>
+          <button type="submit">Yorumu Gönder</button>
+        </form>
+      </div>
+      <div class="modal-section" aria-label="İlgili makaleler">
+        <h3>İlgili Makaleler</h3>
+        <ul id="relatedArticles" style="list-style:none; padding-left: 0;"></ul>
+      </div>
+    `;
+    articleModal.classList.add('show');
+    articleModal.setAttribute('aria-hidden', 'false');
+
+    document.body.style.overflow = 'hidden';
+    articleModal.focus();
+
+    document.getElementById('btnBookmarkArticle').onclick = () => {
+      if(state.bookmarks.some(b => b.articleId === articleId)) {
+        removeBookmark(articleId);
+      } else {
+        addBookmark(articleId);
+      }
+      const btn = document.getElementById('btnBookmarkArticle');
+      const isBookmarked = state.bookmarks.some(b => b.articleId === articleId);
+      btn.setAttribute('aria-pressed', isBookmarked);
+      btn.textContent = isBookmarked ? 'Yer İmini Kaldır' : 'Yer İmi Ekle';
+    };
+    document.getElementById('btnAddReadingList').onclick = () => {
+      if(state.readingList.some(r => r.articleId === articleId)) {
+        removeFromReadingList(articleId);
+      } else {
+        addToReadingList(articleId);
+      }
+      const btn = document.getElementById('btnAddReadingList');
+      const inList = state.readingList.some(r => r.articleId === articleId);
+      btn.setAttribute('aria-pressed', inList);
+      btn.textContent = inList ? 'Okuma Listesinden Kaldır' : 'Okuma Listesine Ekle';
+    };
+    let ttsUtterance=null;
+    document.getElementById('btnTextToSpeech').onclick = () => {
+      if(ttsUtterance) {
+        window.speechSynthesis.cancel();
+        ttsUtterance = null;
+        document.getElementById('btnTextToSpeech').textContent = '▶️ Sesli Oku';
+      } else if('speechSynthesis' in window) {
+        ttsUtterance = new SpeechSynthesisUtterance(article.content.replace(/# /g,'').replace(/\n+/g,'. ').replace(/\[.*?\]\(.*?\)/g, ''));
+        window.speechSynthesis.speak(ttsUtterance);
+        document.getElementById('btnTextToSpeech').textContent = '⏹ Okumayı Durdur';
+        ttsUtterance.onend = () => {
+          ttsUtterance = null;
+          document.getElementById('btnTextToSpeech').textContent = '▶️ Sesli Oku';
+        };
+      } else {
+        alert('Tarayıcınız metni sese çevirmeyi desteklemiyor.');
+      }
+    };
+
+    renderComments(articleId);
+
+    const commentForm = document.getElementById('commentForm');
+    commentForm.onsubmit = e => {
+      e.preventDefault();
+      if(!state.user) {
+        alert("Yorum yapmak için lütfen giriş yapın.");
+        closeArticleModal();
+        openAuthModal();
+        return;
+      }
+      const rawText = e.target.commentText.value.trim();
+      if(rawText.length > 0) {
+        addComment(articleId, state.user.name, rawText);
+        e.target.commentText.value = '';
+        renderComments(articleId);
+      }
+    };
+
+    renderRelatedArticles(articleId);
+  }
+
+  function closeArticleModal() {
+    articleModal.classList.remove('show');
+    articleModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function renderComments(articleId) {
+    const commentContainer = articleModal.querySelector('.modal-comments');
+    commentContainer.innerHTML = '';
+    const comments = state.comments[articleId] || [];
+    if(comments.length === 0) {
+      commentContainer.innerHTML = '<p>Henüz yorum yok. İlk yorumu siz yapın!</p>';
+      return;
+    }
+    comments.forEach(comment => {
+      const div = document.createElement('div');
+      div.className = 'comment';
+      div.innerHTML = `<div class="author">${comment.author} <span class="time">${new Date(comment.date).toLocaleString('tr-TR')}</span></div><div class="text">${escapeHTML(comment.text)}</div>`;
+      commentContainer.appendChild(div);
+    });
+  }
+
+  function addComment(articleId, author, text) {
+    if(!state.comments[articleId]) {
+      state.comments[articleId] = [];
+    }
+    state.comments[articleId].push({author, text, date: new Date().toISOString()});
+    saveToStorage('comments', state.comments);
+  }
+
+  function escapeHTML(text) {
+    const p = document.createElement('p');
+    p.textContent = text;
+    return p.innerHTML;
+  }
+
+  function renderRelatedArticles(articleId) {
+    const ul = articleModal.querySelector('#relatedArticles');
+    ul.innerHTML = '';
+    const current = demoArticles.find(a => a.id === articleId);
+    if(!current) return;
+    const related = demoArticles.filter(a => a.category === current.category && a.id !== articleId).slice(0,5);
+    if(related.length === 0) {
+      ul.innerHTML = '<li>İlgili makale bulunamadı.</li>';
+      return;
+    }
+    related.forEach(article => {
+      const li = document.createElement('li');
+      li.style.cursor = 'pointer';
+      li.style.padding = '6px 0';
+      li.style.color = 'var(--link-color)';
+      li.textContent = article.title;
+      li.setAttribute('tabindex', '0');
+      li.onclick = () => {
+        openArticleModal(article.id);
+      };
+      li.onkeydown = e => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          li.click();
+        }
+      };
+      ul.appendChild(li);
+    });
+  }
+
+  function openAuthModal() {
+    authModal.classList.add('show');
+    authModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    authModal.focus();
+  }
+  function closeAuthModal() {
+    authModal.classList.remove('show');
+    authModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  const focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+  function trapFocus(element) {
+    const focusableElements = element.querySelectorAll(focusableElementsString);
+    const firstTabStop = focusableElements[0];
+    const lastTabStop = focusableElements[focusableElements.length -1];
+
+    element.addEventListener('keydown', function(e) {
+      if(e.key === 'Tab') {
+        if(e.shiftKey) {
+          if(document.activeElement === firstTabStop) {
+            e.preventDefault();
+            lastTabStop.focus();
+          }
+        } else {
+          if(document.activeElement === lastTabStop) {
+            e.preventDefault();
+            firstTabStop.focus();
+          }
+        }
+      }
+      if(e.key === 'Escape') {
+        if(element === authModal) closeAuthModal();
+        else if(element === articleModal) closeArticleModal();
+      }
+    });
+  }
+  trapFocus(articleModal);
+  trapFocus(authModal);
+
+  init();
+
+})();
+</script>
+
+</body>
+</html>
+
